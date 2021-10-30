@@ -6,6 +6,8 @@ import (
 	"log"
 	"net/http"
 	"os"
+
+	"tawesoft.co.uk/go/dialog"
 )
 
 func helloWorld(w http.ResponseWriter, r *http.Request) {
@@ -39,13 +41,18 @@ func helloWorld(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
-	content, err := os.ReadFile("properties/port.txt")
 
+	content, err := os.ReadFile("properties/port.txt")
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal()
 	}
 	var converted string
 	converted = string(content)
+	if converted == "" {
+		dialog.Alert("Port unspecified.")
+		log.Fatal("Port for server is not specified, exiting.")
+	}
 	http.HandleFunc("/", helloWorld)
+
 	http.ListenAndServe(":"+converted, nil)
 }
